@@ -17,7 +17,7 @@ DTMF_FREQS = {
 
 class DialerApp(App):
     def build(self):
-        main_layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
+        main_layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
         self.number_input = TextInput(font_size=32, readonly=True, size_hint=(1, 0.2), halign='center')
         main_layout.add_widget(self.number_input)
         
@@ -66,12 +66,14 @@ class DialerApp(App):
         
         with open(wav_file, 'rb') as f:
             response = requests.post(
-                'https://dsp-dtmf-h8hqdhhnapaaddgn.southeastasia-01.azurewebsites.net/',
+                'https://dsp-dtmf-h8hqdhhnapaaddgn.southeastasia-01.azurewebsites.net/decode',
                 files={'file': f}
             )
         
         if response.status_code == 200:
-            self.result_label.text = f'Result: {response.text}'
+            jsonResponse = response.json()
+            decodedValue = jsonResponse.get("decoded", "Unknown")
+            self.result_label.text = f'Result: {decodedValue}'
         else:
             self.result_label.text = 'Error in API call'
 
